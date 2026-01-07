@@ -7,7 +7,10 @@ loopSpace : (A : Type) (a : A) → Type
 loopSpace A a = a ≡ a
 
 loop_times : ℤ → loopSpace S¹ base
-loop n times = {!!}
+loop pos zero times = refl
+loop pos (suc n) times = loop pos n times ∙ loop
+loop negsuc zero times = sym (loop pos (suc zero) times)
+loop negsuc (suc n) times = sym (loop pos (suc (suc n)) times)
 
 {-
 The definition of sucℤ goes here.
