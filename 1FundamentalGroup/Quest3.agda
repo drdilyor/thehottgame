@@ -44,4 +44,51 @@ rewind = outOfS¹D (λ x → helix x → base ≡ x) loop_times
   ∎)
 
 loopSpace≡ℤ : loopSpace S¹ base ≡ ℤ
-loopSpace≡Z = {!!}
+loopSpace≡ℤ = isoToPath (iso fun inv rightInv leftInv) where
+  fun : loopSpace S¹ base → ℤ
+  fun = windingNumber base
+  inv : ℤ → loopSpace S¹ base
+  inv = rewind base
+
+  rightInv : section fun inv
+  rightInv (pos zero) =
+      fun (inv (pos zero))
+    ≡⟨ refl ⟩
+      fun refl
+    ≡⟨ refl ⟩
+      pos zero
+    ∎
+  rightInv (pos (suc n)) =
+      fun (inv (pos (suc n)))
+    ≡⟨ refl ⟩
+      fun (loop pos (suc n) times)
+    ≡⟨ refl ⟩
+      endPt helix (loop pos (suc n) times) (pos zero)
+    ≡⟨  refl ⟩
+      sucℤ (endPt helix (loop pos n times) (pos zero))
+    ≡⟨ cong sucℤ (rightInv (pos n)) ⟩
+      sucℤ (pos n)
+    ≡⟨ refl ⟩
+      pos (suc n)
+    ∎
+  rightInv (negsuc zero) = refl
+  rightInv (negsuc (suc n)) =
+      fun (inv (negsuc (suc n)))
+    ≡⟨ refl ⟩
+      fun (loop negsuc (suc n) times)
+    ≡⟨ refl ⟩
+      endPt helix (loop negsuc (suc n) times) (pos zero)
+    ≡⟨ refl ⟩
+      predℤ (endPt helix (loop negsuc n times) (pos zero))
+    ≡⟨ cong predℤ (rightInv (negsuc n)) ⟩
+      predℤ (negsuc n)
+    ≡⟨ refl ⟩
+      negsuc (suc n)
+    ∎
+  -- i got stuck on leftInv and had to look at the solution
+  -- turns ou i need to generalize the statement
+
+  rewindWindingNumber : (x : S¹) (p : base ≡ x) → rewind x (windingNumber x p) ≡ p
+  rewindWindingNumber x = J (λ x b → rewind x (windingNumber x b) ≡ b) refl {- works for unbeknownst-to-me reasons -} 
+  leftInv : retract fun inv
+  leftInv = rewindWindingNumber base
